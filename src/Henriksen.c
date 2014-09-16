@@ -12,8 +12,10 @@ struct HLN HLNDef = {NULL, NULL, INT_MIN, NULL};
 struct HTN HTNDef = {NULL, NULL, NULL};
 
 //Internal Functions
-HLN* createHLN(int time);
+HLN* createHLN(int time, void* ePayload);
 HTN* createHTN(HLN* lItem);
+HLN* findMin(HDS* hds, int eTime);
+
 
 HDS* createHenrik(int pSize)
 {
@@ -22,8 +24,8 @@ HDS* createHenrik(int pSize)
 	temp->pSize = pSize;
 
 	//Create the dummy list items
-	temp->lHead = createHLN(INT_MIN);
-	temp->lTail = createHLN(INT_MAX);
+	temp->lHead = createHLN(INT_MIN, NULL);
+	temp->lTail = createHLN(INT_MAX, NULL);
 	temp->lHead->lNext = temp->lTail;
 	temp->lTail->lPrev = temp->lHead;
 
@@ -37,10 +39,61 @@ HDS* createHenrik(int pSize)
 
 	return temp;
 }
+void destroyHenrik(HDS* hds) { return; }
+
+void insertEvent(HDS* hds, int eTime, void* payload)
+{
+	HLN* temp = createHLN(eTime, payload);
+	//Find smallest time > eTime
+	HLN* rItem = findMin(hds, eTime);
+	HLN* lItem = rItem->lPrev;
+	//Insert the new item
+	temp->lPrev = lItem;
+	temp->lNext = rItem;
+
+	lItem->lNext = temp;
+	rItem->lPrev = temp;
+
+}
+
+HLN* findMin(HDS* hds, int eTime)
+{
+	HTN* tNode = hds->tRoot;
+
+	//Search tree
+	while(1)
+	{
+		if(eTime >= tNode->lItem->eTime)
+		{
+			tNode = tNode->rChild;
+		} else
+		{
+			if(tNode->lChild == NULL)
+				break;
+			tNode = tNode->lChild;
+		}
+	}
+	int nCount = 0;
+	//Search starting at node provided
+	HLN* max = tNode->lItem;
+	while(max->eTime >= eTime)
+	{
+		//Pull if necessary
+		if(nCount > 4)
+		{
+			tNode->lowNode->lItem = max;
+		}
+
+		max = max->lPrev;
+		nCount++;
+	}
+
+	return max->lNext;
+}
 
 
 
-
+/*-------------------------------------------------------*/
 HLN* createHLN(int time, void* ePayload)
 {
 	HLN* temp = malloc(sizeof(HLN));

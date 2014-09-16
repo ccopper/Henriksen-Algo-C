@@ -38,7 +38,7 @@ HDS* createHenrik(int pSize);
 void destroyHenrik(HDS* hds);
 
 
-void insert(int eTime, void* payload);
+void insertEvent(HDS* hds, int eTime, void* payload);
 
 
 #endif
