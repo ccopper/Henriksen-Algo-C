@@ -28,12 +28,10 @@ typedef struct
 	HLN* lHead;
 	HLN* lTail;
 	HTN* tRoot;
-
-	int pSize;
 } HDS;
 
 //Create a new Henriksen with the given payload size
-HDS* createHenrik(int pSize);
+HDS* createHenrik();
 //Destroy the list and dealloc memory
 void destroyHenrik(HDS* hds);
 

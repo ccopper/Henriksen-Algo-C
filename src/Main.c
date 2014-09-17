@@ -8,7 +8,7 @@ void printInOrder(HTN* root);
 
 int main(void)
 {
-	HDS* hds = createHenrik(0);
+	HDS* hds = createHenrik();
 
 	printInOrder(hds->tRoot);
 
@@ -25,6 +25,8 @@ int main(void)
 
 
 	printList(hds);
+
+	destroyHenrik(hds);
 
 	return 0;
 }

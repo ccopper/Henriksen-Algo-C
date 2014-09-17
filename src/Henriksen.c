@@ -16,12 +16,14 @@ HLN* createHLN(int time, void* ePayload);
 HTN* createHTN(HLN* lItem);
 HLN* findMin(HDS* hds, int eTime);
 
+void freeTree(HTN* root);
 
-HDS* createHenrik(int pSize)
+
+
+HDS* createHenrik()
 {
 	//Alloc new object
 	HDS* temp = malloc(sizeof(HDS));
-	temp->pSize = pSize;
 
 	//Create the dummy list items
 	temp->lHead = createHLN(INT_MIN, NULL);
@@ -39,7 +41,31 @@ HDS* createHenrik(int pSize)
 
 	return temp;
 }
-void destroyHenrik(HDS* hds) { return; }
+
+void destroyHenrik(HDS* hds)
+{
+	freeTree(hds->tRoot);
+
+	HLN* temp = hds->lHead;
+
+	while(temp->lNext != NULL)
+	{
+		temp = temp->lNext;
+		free(temp->lPrev);
+	}
+
+	free(temp);
+	free(hds);
+	return;
+}
+void freeTree(HTN* root)
+{
+	if(root->lChild != NULL)
+		freeTree(root->lChild);
+	if(root->rChild != NULL)
+		freeTree(root->rChild);
+	free(root);
+}
 
 void insertEvent(HDS* hds, int eTime, void* payload)
 {
