@@ -14,13 +14,16 @@ HDS
   
 #Functions
 
-HDS* createHenrik()
-  Creates a new instance and returns the pointer.
+*HDS* createHenrik()*
 
-void destroyHenrik(HDS* hds)
-  Deallocs the entire structure. Does not dealloc payloads.
+Creates a new instance and returns the pointer.
+
+*void destroyHenrik(HDS* hds)*
+
+Deallocs the entire structure. Does not dealloc payloads.
 
 
-void insertEvent(HDS* hds, int eTime, void* payload)
-  Inserts a new item in the queue into the passed structure. Items are sorted by eTime, payload is an optional pointer to additional data.
+*void insertEvent(HDS* hds, int eTime, void* payload)*
+
+Inserts a new item in the queue into the passed structure. Items are sorted by eTime, payload is an optional pointer to additional data.
   
