@@ -1,18 +1,18 @@
-Henriksen-Algo-C
+##Henriksen-Algo-C
 ================
 
 Implementation of Henriksen's Algorithm in C
 
-Current Implementation:
--Create a new instance
--Insert events (Tree does not expand past inital 3 nodes)
--Dealloc tree
+#Current Implementation
+- Create a new instance
+- Insert events (Tree does not expand past inital 3 nodes)
+- Dealloc tree
 
-'Structures
+#Structures
 HDS
   Holds all necessary information for the structure.
   
-'Functions
+#Functions
 
 HDS* createHenrik()
   Creates a new instance and returns the pointer.
