@@ -10,6 +10,7 @@ int main(void)
 {
 	HDS* hds = createHenrik();
 
+	printInOrder(hds->tRoot);
 
 	expandTree(hds->tRoot, 1);
 
@@ -30,7 +31,7 @@ void printInOrder(HTN* root)
 {
 	if(root->lChild != NULL)
 		printInOrder(root->lChild);
-	printf("%i\n", root->lItem->eTime);
+	printf("%i\n", root->eTime);
 	if(root->rChild != NULL)
 		printInOrder(root->rChild);
 }

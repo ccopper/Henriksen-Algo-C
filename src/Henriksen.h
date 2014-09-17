@@ -20,6 +20,7 @@ struct HTN
 	HTN* rChild;
 	HTN* lowNode;
 	HLN* lItem;
+	int eTime;
 };
 
 //RootNode / LL head
@@ -37,6 +38,8 @@ void destroyHenrik(HDS* hds);
 //Inserts a new event into the tree
 void insertEvent(HDS* hds, int eTime, void* payload);
 
+void* deQueue(HDS* hds);
+void* delete(HDS* hds, int eTime);
 
 
 #endif

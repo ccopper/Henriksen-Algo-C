@@ -7,13 +7,16 @@
 
 #include "Henriksen.h"
 
+#define nullNode(tNode) tNode->lItem = NULL; tNode->eTime = INT_MIN;
+#define copyNode(oNode,nNode) nNode->lItem = oNode->lItem; nNode->eTime = oNode->eTime;
+
 //Defaults for the structs
 struct HLN HLNDef = {NULL, NULL, INT_MIN, NULL};
-struct HTN HTNDef = {NULL, NULL, NULL};
+struct HTN HTNDef = {NULL, NULL, NULL, NULL, INT_MIN};
 
 //Internal Functions
 HLN* createHLN(int time, void* ePayload);
-HTN* createHTN(HLN* lItem);
+HTN* createHTN(HLN* lItem, int eTime);
 HLN* findMin(HDS* hds, int eTime);
 
 void freeTree(HTN* root);
@@ -32,12 +35,8 @@ HDS* createHenrik()
 	temp->lTail->lPrev = temp->lHead;
 
 	//Create the default tree
-	temp->tRoot = createHTN(temp->lHead);
-	temp->tRoot->lChild = createHTN(temp->lHead);
-	temp->tRoot->rChild = createHTN(temp->lTail);
+	temp->tRoot = createHTN(temp->lTail, 0);
 
-	temp->tRoot->rChild->lowNode = temp->tRoot;
-	temp->tRoot->lowNode = temp->tRoot->lChild;
 
 	return temp;
 }
@@ -59,17 +58,10 @@ void destroyHenrik(HDS* hds)
 	return;
 }
 
-void freeTree(HTN* root)
-{
-	if(root->lChild != NULL)
-		freeTree(root->lChild);
-	if(root->rChild != NULL)
-		freeTree(root->rChild);
-	free(root);
-}
-
 void insertEvent(HDS* hds, int eTime, void* payload)
 {
+	if(eTime == INT_MIN || eTime == INT_MAX )
+		return;
 	HLN* temp = createHLN(eTime, payload);
 	//Find smallest time > eTime
 	HLN* rItem = findMin(hds, eTime);
@@ -83,6 +75,45 @@ void insertEvent(HDS* hds, int eTime, void* payload)
 
 }
 
+void* deQueue(HDS* hds)
+{
+	HLN* lItem = hds->lHead->lNext;
+	if(lItem->eTime == INT_MAX)
+		return NULL;
+
+	hds->lHead->lNext = lItem->lNext;
+	lItem->lNext->lPrev = hds->lHead;
+
+	void* temp = lItem->ePayload;
+	free(lItem);
+	return temp;
+}
+
+void* delete(HDS* hds, int eTime)
+{
+	HLN* lItem = findMin(hds, eTime);
+	if(lItem->eTime != eTime || lItem->eTime == INT_MAX || lItem->eTime == INT_MIN)
+		return NULL;
+
+	lItem->lNext->lPrev = lItem->lPrev;
+	lItem->lPrev->lNext = lItem->lNext;
+
+	void* temp = lItem->ePayload;
+	free(lItem);
+	return temp;
+}
+
+
+
+void freeTree(HTN* root)
+{
+	if(root->lChild != NULL)
+		freeTree(root->lChild);
+	if(root->rChild != NULL)
+		freeTree(root->rChild);
+	free(root);
+}
+
 HLN* findMin(HDS* hds, int eTime)
 {
 	HTN* tNode = hds->tRoot;
@@ -90,7 +121,7 @@ HLN* findMin(HDS* hds, int eTime)
 	//Search tree
 	while(1)
 	{
-		if(eTime >= tNode->lItem->eTime)
+		if(eTime >= tNode->eTime)
 		{
 			tNode = tNode->rChild;
 		} else
@@ -106,16 +137,15 @@ HLN* findMin(HDS* hds, int eTime)
 	while(max->eTime >= eTime)
 	{
 		//Pull if necessary
-		if(nCount > 4)
+		if(nCount > DIST_MAX)
 		{
 			//Check to see if we overflowed the tree
 			//Only expand once though
 			if(tNode->lowNode == NULL && nCount == 5)
 			{
 				expandTree(hds->tRoot, 1);
-
 			}
-
+			//Update the pull pointer
 			tNode->lowNode->lItem = max;
 			//Reset the count and do another pull if necessary
 			tNode = tNode->lowNode;
@@ -125,6 +155,7 @@ HLN* findMin(HDS* hds, int eTime)
 		max = max->lPrev;
 		nCount++;
 	}
+
 
 
 	return max->lNext;
@@ -141,11 +172,15 @@ void expandTree(HTN* root, int isFirstCall)
 	//Check right child exists or create it
 	if(root->rChild == NULL)
 	{
-		root->rChild = createHTN(root->lItem);
+		root->rChild = createHTN(NULL, INT_MIN);
 		//Check to see if this is the rightmost node
 		if(prevNode != NULL)
 		{
 			prevNode->lowNode = root->rChild;
+		} else
+		{
+			copyNode(root, root->rChild);
+			nullNode(root);
 		}
 		//update the previous node to the new one
 		prevNode = root->rChild;
@@ -161,7 +196,7 @@ void expandTree(HTN* root, int isFirstCall)
 	prevNode = root;
 	if(root->lChild == NULL)
 	{
-		root->lChild = createHTN(root->lItem);
+		root->lChild = createHTN(NULL, INT_MIN);
 		prevNode->lowNode = root->lChild;
 		prevNode = root->lChild;
 	} else
@@ -180,11 +215,19 @@ HLN* createHLN(int time, void* ePayload)
 	temp->ePayload = ePayload;
 	return temp;
 }
-HTN* createHTN(HLN* lItem)
+HTN* createHTN(HLN* lItem, int eTime)
 {
 	HTN* temp = malloc(sizeof(HTN));
 	memcpy(temp, &HTNDef, sizeof(HTN));
 	temp->lItem = lItem;
+
+	if(lItem == NULL)
+	{
+		temp->eTime = eTime;
+	} else
+	{
+		temp->eTime = lItem->eTime;
+	}
 	return temp;
 }
 
