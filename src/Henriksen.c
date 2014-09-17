@@ -17,7 +17,7 @@ HTN* createHTN(HLN* lItem);
 HLN* findMin(HDS* hds, int eTime);
 
 void freeTree(HTN* root);
-void expandTree(HTN* root, HLN* min);
+void expandTree(HTN* root, int firstCall);
 
 
 HDS* createHenrik()
@@ -111,7 +111,10 @@ HLN* findMin(HDS* hds, int eTime)
 			//Check to see if we overflowed the tree
 			//Only expand once though
 			if(tNode->lowNode == NULL && nCount == 5)
-				expandTree(hds->tRoot, hds->lHead);
+			{
+				expandTree(hds->tRoot, 1);
+
+			}
 
 			tNode->lowNode->lItem = max;
 			//Reset the count and do another pull if necessary
@@ -123,33 +126,49 @@ HLN* findMin(HDS* hds, int eTime)
 		nCount++;
 	}
 
+
 	return max->lNext;
 }
 
-void expandTree(HTN* root, HLN* min)
+void expandTree(HTN* root, int isFirstCall)
 {
+	//Pointer to track the last node encountered
+	static HTN* prevNode = NULL;
+	//if its the first call
+	if(isFirstCall)
+		prevNode = NULL;
+
+	//Check right child exists or create it
 	if(root->rChild == NULL)
 	{
-		//Check to see if its the right most child
-		if(root->lItem->eTime == INT_MAX)
+		root->rChild = createHTN(root->lItem);
+		//Check to see if this is the rightmost node
+		if(prevNode != NULL)
 		{
-			root->rChild = createHTN(root->lItem);
-			root->lItem = min;
-		} else
-		{
-			root->rChild = createHTN(min);
+			prevNode->lowNode = root->rChild;
 		}
+		//update the previous node to the new one
+		prevNode = root->rChild;
 	} else
 	{
-		expandTree(root->rChild, min);
+		//Not a old leaf so travel down
+		expandTree(root->rChild, 0);
 	}
+	//update the previous node's low pointer
+	prevNode->lowNode = root;
+
+	//update the low pointer and proceed
+	prevNode = root;
 	if(root->lChild == NULL)
 	{
-		root->lChild = createHTN(min);
+		root->lChild = createHTN(root->lItem);
+		prevNode->lowNode = root->lChild;
+		prevNode = root->lChild;
 	} else
 	{
-		expandTree(root->lChild, min);
+		expandTree(root->lChild, 0);
 	}
+
 }
 
 

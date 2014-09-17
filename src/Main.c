@@ -11,7 +11,7 @@ int main(void)
 	HDS* hds = createHenrik();
 
 
-	expandTree(hds->tRoot, hds->lHead);
+	expandTree(hds->tRoot, 1);
 
 	printInOrder(hds->tRoot);
 
