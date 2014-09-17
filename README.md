@@ -25,26 +25,26 @@ HDS
   
 #Functions
 
-''' HDS* createHenrik() '''
+``` HDS* createHenrik() ```
 - RETURN (HDS*) Pointer to the new structure;
 Creates a new instance.
 
-''' void destroyHenrik(HDS* hds) '''
+``` void destroyHenrik(HDS* hds) ```
 - IN (hds) Pointer to the structure 
 Deallocs the entire structure. Does not dealloc payloads.
 
-''' void insertEvent(HDS* hds, int eTime, void* payload) '''
+``` void insertEvent(HDS* hds, int eTime, void* payload) ```
 - IN (hds) Pointer to the structure
 - IN (eTime) Time for the new event. Must be unique and between INT_MIN and INT_MAX exclusive. 
 - IN (payload) Pointer to optional data regardng the event;
 Inserts a new item in the queue into the passed structure. Items are sorted by eTime, payload is an optional pointer to additional data.
 
-''' void* deQueue(HDS* hds) '''
+``` void* deQueue(HDS* hds) ```
 - IN (hds) Pointer to the structure
 - RETURN (VOID *) Pointer to the payload given when the event was inserted.
 Removes the item from the front of the queue, if a payload was given the pointer will be returned.
 
-''' void* delete(HDS* hds, int eTime) '''
+``` void* delete(HDS* hds, int eTime) ```
 - IN (hds) Pointer to the structure
 - IN (eTime) Time of the event to remove
 - RETURN (VOID *) Pointer to the payload given when the event was inserted.
