@@ -34,9 +34,9 @@ typedef struct
 HDS* createHenrik();
 //Destroy the list and dealloc memory
 void destroyHenrik(HDS* hds);
-
-
+//Inserts a new event into the tree
 void insertEvent(HDS* hds, int eTime, void* payload);
+
 
 
 #endif

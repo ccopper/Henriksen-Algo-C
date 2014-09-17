@@ -10,21 +10,15 @@ int main(void)
 {
 	HDS* hds = createHenrik();
 
-	printInOrder(hds->tRoot);
 
-	insertEvent(hds, 20, NULL);
-	insertEvent(hds, 10, NULL);
-	insertEvent(hds, 5, NULL);
-	insertEvent(hds, 4, NULL);
-	insertEvent(hds, 3, NULL);
-	insertEvent(hds, 2, NULL);
+	expandTree(hds->tRoot, hds->lHead);
 
 	printInOrder(hds->tRoot);
 
-	//insertEvent(hds, 15, NULL);
 
 
-	printList(hds);
+
+
 
 	destroyHenrik(hds);
 

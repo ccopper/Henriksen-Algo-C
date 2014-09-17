@@ -17,7 +17,7 @@ HTN* createHTN(HLN* lItem);
 HLN* findMin(HDS* hds, int eTime);
 
 void freeTree(HTN* root);
-
+void expandTree(HTN* root, HLN* min);
 
 
 HDS* createHenrik()
@@ -58,6 +58,7 @@ void destroyHenrik(HDS* hds)
 	free(hds);
 	return;
 }
+
 void freeTree(HTN* root)
 {
 	if(root->lChild != NULL)
@@ -107,7 +108,15 @@ HLN* findMin(HDS* hds, int eTime)
 		//Pull if necessary
 		if(nCount > 4)
 		{
+			//Check to see if we overflowed the tree
+			//Only expand once though
+			if(tNode->lowNode == NULL && nCount == 5)
+				expandTree(hds->tRoot, hds->lHead);
+
 			tNode->lowNode->lItem = max;
+			//Reset the count and do another pull if necessary
+			tNode = tNode->lowNode;
+			nCount = 0;
 		}
 
 		max = max->lPrev;
@@ -117,9 +126,33 @@ HLN* findMin(HDS* hds, int eTime)
 	return max->lNext;
 }
 
+void expandTree(HTN* root, HLN* min)
+{
+	if(root->rChild == NULL)
+	{
+		//Check to see if its the right most child
+		if(root->lItem->eTime == INT_MAX)
+		{
+			root->rChild = createHTN(root->lItem);
+			root->lItem = min;
+		} else
+		{
+			root->rChild = createHTN(min);
+		}
+	} else
+	{
+		expandTree(root->rChild, min);
+	}
+	if(root->lChild == NULL)
+	{
+		root->lChild = createHTN(min);
+	} else
+	{
+		expandTree(root->lChild, min);
+	}
+}
 
 
-/*-------------------------------------------------------*/
 HLN* createHLN(int time, void* ePayload)
 {
 	HLN* temp = malloc(sizeof(HLN));
