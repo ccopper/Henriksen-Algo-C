@@ -17,7 +17,10 @@ struct HTN HTNDef = {NULL, NULL, NULL, NULL, INT_MIN};
 //Internal Functions
 HLN* createHLN(int time, void* ePayload);
 HTN* createHTN(HLN* lItem, int eTime);
-HLN* findMin(HDS* hds, int eTime);
+
+HTN* findMinTree(HDS* hds, int eTime);
+HLN* findMinList(HTN* tNode, int eTime);
+
 
 void freeTree(HTN* root);
 void expandTree(HTN* root, int firstCall);
@@ -75,6 +78,15 @@ void insertEvent(HDS* hds, int eTime, void* payload)
 
 }
 
+int peek(HDS* hds)
+{
+	HLN* lItem = hds->lHead->lNext;
+	if(lItem->eTime == INT_MAX)
+		return INT_MIN;
+	else
+		return lItem->eTime;
+}
+
 void* deQueue(HDS* hds)
 {
 	HLN* lItem = hds->lHead->lNext;
@@ -91,7 +103,9 @@ void* deQueue(HDS* hds)
 
 void* delete(HDS* hds, int eTime)
 {
-	HLN* lItem = findMin(hds, eTime);
+	HTN* tNode = findMinTree(hds, eTime);
+	HLN* lItem = findMinList(tNode, eTime);
+
 	if(lItem->eTime != eTime || lItem->eTime == INT_MAX || lItem->eTime == INT_MIN)
 		return NULL;
 
@@ -114,7 +128,7 @@ void freeTree(HTN* root)
 	free(root);
 }
 
-HLN* findMin(HDS* hds, int eTime)
+HTN* findMinTree(HDS* hds, int eTime)
 {
 	HTN* tNode = hds->tRoot;
 
@@ -131,6 +145,9 @@ HLN* findMin(HDS* hds, int eTime)
 			tNode = tNode->lChild;
 		}
 	}
+}
+HLN* findMinList(HTN* tNode, int eTime)
+{
 	int nCount = 0;
 	//Search starting at node provided
 	HLN* max = tNode->lItem;
@@ -155,8 +172,6 @@ HLN* findMin(HDS* hds, int eTime)
 		max = max->lPrev;
 		nCount++;
 	}
-
-
 
 	return max->lNext;
 }

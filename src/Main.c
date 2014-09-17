@@ -8,18 +8,16 @@ void printInOrder(HTN* root);
 
 int main(void)
 {
+	char *data = "Hello Event Driven World\n";
+
 	HDS* hds = createHenrik();
+	printf("Created a new HDS at 0x%X\n", (unsigned int)hds);
 
-	printInOrder(hds->tRoot);
+	insertEvent(hds, 5, data);
+	printf("There is now an event at time %i\n", peek(hds));
 
-	expandTree(hds->tRoot, 1);
-
-	printInOrder(hds->tRoot);
-
-
-
-
-
+	char* temp = deQueue(hds);
+	printf("DeQueuing event. Payload was: %s", temp);
 
 	destroyHenrik(hds);
 

@@ -38,6 +38,8 @@ void destroyHenrik(HDS* hds);
 //Inserts a new event into the tree
 void insertEvent(HDS* hds, int eTime, void* payload);
 
+int peek(HDS* hds);
+
 void* deQueue(HDS* hds);
 void* delete(HDS* hds, int eTime);
 
