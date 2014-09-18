@@ -12,12 +12,24 @@ int main(void)
 
 	HDS* hds = createHenrik();
 	printf("Created a new HDS at 0x%X\n", (unsigned int)hds);
-
+	/*
 	insertEvent(hds, 5, data);
 	printf("There is now an event at time %i\n", peek(hds));
 
 	char* temp = deQueue(hds);
 	printf("DeQueuing event. Payload was: %s", temp);
+	*/
+	int x;
+	for(x = 10; x > 0; x-- )
+	{
+		insertEvent(hds, x, (void *)x);
+		printList(hds);
+		printInOrder(hds->tRoot);
+		printf("\n");
+	}
+
+
+
 
 	destroyHenrik(hds);
 
@@ -29,10 +41,11 @@ void printInOrder(HTN* root)
 {
 	if(root->lChild != NULL)
 		printInOrder(root->lChild);
-	printf("%i\n", root->eTime);
+	printf("%i, ", root->eTime);
 	if(root->rChild != NULL)
 		printInOrder(root->rChild);
 }
+
 
 //Print the list of items in descending order
 void printList(HDS* hds)
@@ -41,8 +54,9 @@ void printList(HDS* hds)
 
 	while(temp != NULL)
 	{
-		printf("%i\n", temp->eTime);
+		printf("%i, ", temp->eTime);
 		temp = temp->lPrev;
 	}
+	printf("\n");
 	return;
 }

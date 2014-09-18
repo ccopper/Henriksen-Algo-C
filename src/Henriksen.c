@@ -19,7 +19,7 @@ HLN* createHLN(int time, void* ePayload);
 HTN* createHTN(HLN* lItem, int eTime);
 
 HTN* findMinTree(HDS* hds, int eTime);
-HLN* findMinList(HTN* tNode, int eTime);
+HLN* findMinList(HDS* hds, HTN* tNode, int eTime);
 
 
 void freeTree(HTN* root);
@@ -67,7 +67,8 @@ void insertEvent(HDS* hds, int eTime, void* payload)
 		return;
 	HLN* temp = createHLN(eTime, payload);
 	//Find smallest time > eTime
-	HLN* rItem = findMin(hds, eTime);
+	HTN* tNode = findMinTree(hds, eTime);
+	HLN* rItem = findMinList(hds, tNode, eTime);
 	HLN* lItem = rItem->lPrev;
 	//Insert the new item
 	temp->lPrev = lItem;
@@ -104,10 +105,26 @@ void* deQueue(HDS* hds)
 void* delete(HDS* hds, int eTime)
 {
 	HTN* tNode = findMinTree(hds, eTime);
-	HLN* lItem = findMinList(tNode, eTime);
+	HLN* lItem = findMinList(hds, tNode, eTime);
 
 	if(lItem->eTime != eTime || lItem->eTime == INT_MAX || lItem->eTime == INT_MIN)
 		return NULL;
+
+	//Check to see if this list item is in the tree
+	if(tNode->lowNode->lItem == lItem)
+	{
+		//Traverse backwards until we find another node with value
+		HTN* temp = tNode->lowNode->lowNode;
+		while(temp != NULL || temp->eTime == INT_MIN)
+			temp = temp->lowNode;
+
+		if(temp != NULL)
+		{
+			copyNode(temp, tNode->lowNode);
+			nullNode(tNode);
+		}
+
+	}
 
 	lItem->lNext->lPrev = lItem->lPrev;
 	lItem->lPrev->lNext = lItem->lNext;
@@ -145,8 +162,9 @@ HTN* findMinTree(HDS* hds, int eTime)
 			tNode = tNode->lChild;
 		}
 	}
+	return tNode;
 }
-HLN* findMinList(HTN* tNode, int eTime)
+HLN* findMinList(HDS* hds, HTN* tNode, int eTime)
 {
 	int nCount = 0;
 	//Search starting at node provided
@@ -164,6 +182,7 @@ HLN* findMinList(HTN* tNode, int eTime)
 			}
 			//Update the pull pointer
 			tNode->lowNode->lItem = max;
+			tNode->lowNode->eTime = max->eTime;
 			//Reset the count and do another pull if necessary
 			tNode = tNode->lowNode;
 			nCount = 0;
