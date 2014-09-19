@@ -12,23 +12,31 @@ int main(void)
 	//char *data = "Hello Event Driven World\n";
 
 	HDS* hds = createHenrik();
-	//printf("Created a new HDS at 0x%X\n", (unsigned int)hds);
+	printf("Created a new HDS at 0x%X\n", (unsigned int)hds);
 
-	/*insertEvent(hds, 5, NULL);
+	insertEvent(hds, 5, NULL);
 	printf("There is now an event at time %i\n", peek(hds));
 
 	char* temp = deQueue(hds);
 	printf("DeQueuing event. Payload was: %s", temp);
-	*/
 
 
+	printf("First batch\n");
 	int x;
-	for(x = 100; x > 0; x -= 2 )
+	for(x = 2; x <= 100; x += 2 )
 	{
 		insertEvent(hds, x, (void *)x);
 	}
-
-
+	printf("Second Batch\n");
+	for(x = 1; x <= 100; x += 2 )
+	{
+		insertEvent(hds, x, (void *)x);
+	}
+	printf("Delete Batch\n");
+	for(x = 1; x <= 100; x += 3 )
+	{
+		delete(hds, x);
+	}
 
 
 	destroyHenrik(hds);

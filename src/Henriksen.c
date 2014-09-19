@@ -113,11 +113,11 @@ void* delete(HDS* hds, int eTime)
 		return NULL;
 
 	//Check to see if this list item is in the tree
-	if(tNode->lowNode->lItem == lItem)
+	if(tNode ->lowNode != NULL && tNode->lowNode->lItem == lItem)
 	{
 		//Traverse backwards until we find another node with value
 		HTN* temp = tNode->lowNode->lowNode;
-		while(temp != NULL || temp->eTime == INT_MIN)
+		while(temp == NULL || temp->eTime == INT_MIN)
 			temp = temp->lowNode;
 
 		if(temp != NULL)
@@ -158,7 +158,7 @@ HTN* findMinTree(HDS* hds, int eTime)
 	{
 		if(eTime >= tNode->eTime)
 		{
-			if(tNode->rChild == NULL)
+			if(tNode->rChild == NULL || tNode->rChild->eTime < eTime)
 				break;
 			tNode = tNode->rChild;
 			//printf("R: %i\n", tNode->eTime);
@@ -179,8 +179,8 @@ HLN* findMinList(HDS* hds, HTN* tNode, int eTime)
 	//Search starting at node provided
 	HLN* max = tNode->lItem;
 
-	//printf("T: %i\n", eTime);
-	//printf("S: %i\n", tNode->eTime);
+	printf("T: %i\n", eTime);
+	printf("S: %i\n", tNode->eTime);
 
 	while(max->eTime >= eTime)
 	{
@@ -205,6 +205,7 @@ HLN* findMinList(HDS* hds, HTN* tNode, int eTime)
 				{
 					expandTree(hds->tRoot, 1);
 				}
+				printf("E");
 			}
 
 			//Reset the count and do another pull if necessary
