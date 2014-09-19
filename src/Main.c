@@ -6,26 +6,26 @@
 void printList(HDS* hds);
 void printInOrder(HTN* root);
 
+
 int main(void)
 {
-	char *data = "Hello Event Driven World\n";
+	//char *data = "Hello Event Driven World\n";
 
 	HDS* hds = createHenrik();
-	printf("Created a new HDS at 0x%X\n", (unsigned int)hds);
-	/*
-	insertEvent(hds, 5, data);
+	//printf("Created a new HDS at 0x%X\n", (unsigned int)hds);
+
+	/*insertEvent(hds, 5, NULL);
 	printf("There is now an event at time %i\n", peek(hds));
 
 	char* temp = deQueue(hds);
 	printf("DeQueuing event. Payload was: %s", temp);
 	*/
+
+
 	int x;
-	for(x = 10; x > 0; x-- )
+	for(x = 100; x > 0; x -= 2 )
 	{
 		insertEvent(hds, x, (void *)x);
-		printList(hds);
-		printInOrder(hds->tRoot);
-		printf("\n");
 	}
 
 

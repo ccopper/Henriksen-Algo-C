@@ -4,8 +4,10 @@
 #include <string.h>
 #include <limits.h>
 
-
 #include "Henriksen.h"
+
+void printLTH(HDS* hds);
+
 
 #define nullNode(tNode) tNode->lItem = NULL; tNode->eTime = INT_MIN;
 #define copyNode(oNode,nNode) nNode->lItem = oNode->lItem; nNode->eTime = oNode->eTime;
@@ -149,19 +151,26 @@ HTN* findMinTree(HDS* hds, int eTime)
 {
 	HTN* tNode = hds->tRoot;
 
+	//printf("T: %i\n", eTime);
+	//printf("S: %i\n", tNode->eTime);
 	//Search tree
 	while(1)
 	{
 		if(eTime >= tNode->eTime)
 		{
+			if(tNode->rChild == NULL)
+				break;
 			tNode = tNode->rChild;
+			//printf("R: %i\n", tNode->eTime);
 		} else
 		{
-			if(tNode->lChild == NULL)
+			if(tNode->lChild == NULL || tNode->lChild->eTime < eTime)
 				break;
 			tNode = tNode->lChild;
+			//printf("L: %i\n", tNode->eTime);
 		}
 	}
+	//printf("E: %i\n", tNode->eTime);
 	return tNode;
 }
 HLN* findMinList(HDS* hds, HTN* tNode, int eTime)
@@ -169,28 +178,55 @@ HLN* findMinList(HDS* hds, HTN* tNode, int eTime)
 	int nCount = 0;
 	//Search starting at node provided
 	HLN* max = tNode->lItem;
+
+	//printf("T: %i\n", eTime);
+	//printf("S: %i\n", tNode->eTime);
+
 	while(max->eTime >= eTime)
 	{
 		//Pull if necessary
 		if(nCount > DIST_MAX)
 		{
+			//printf("PRE: ");
+			//printLTH(hds);
+
 			//Check to see if we overflowed the tree
 			//Only expand once though
 			if(tNode->lowNode == NULL && nCount == 5)
 			{
-				expandTree(hds->tRoot, 1);
+				//If this is the rightmost node we will have
+				//to save the node
+				if(tNode->eTime == INT_MAX)
+				{
+					expandTree(hds->tRoot, 1);
+
+					tNode = tNode->rChild;
+				} else
+				{
+					expandTree(hds->tRoot, 1);
+				}
 			}
-			//Update the pull pointer
-			tNode->lowNode->lItem = max;
-			tNode->lowNode->eTime = max->eTime;
+
 			//Reset the count and do another pull if necessary
 			tNode = tNode->lowNode;
+			//Update the pull pointer
+			tNode->lItem = max;
+			tNode->eTime = max->eTime;
+
+			printf("P: %i\n", max->eTime);
+
 			nCount = 0;
+
+			//printf("PST: ");
+			//printLTH(hds);
+			//printf("\n");
 		}
+		//printf("N: %i\n", max->eTime);
 
 		max = max->lPrev;
 		nCount++;
 	}
+	//printf("E: %i\n", max->lNext->eTime);
 
 	return max->lNext;
 }
@@ -240,7 +276,7 @@ void expandTree(HTN* root, int isFirstCall)
 
 }
 
-
+//Creates a new list node
 HLN* createHLN(int time, void* ePayload)
 {
 	HLN* temp = malloc(sizeof(HLN));
@@ -249,6 +285,7 @@ HLN* createHLN(int time, void* ePayload)
 	temp->ePayload = ePayload;
 	return temp;
 }
+//Create a new tree node
 HTN* createHTN(HLN* lItem, int eTime)
 {
 	HTN* temp = malloc(sizeof(HTN));
@@ -264,4 +301,22 @@ HTN* createHTN(HLN* lItem, int eTime)
 	}
 	return temp;
 }
+
+
+
+void printLTH(HDS* hds)
+{
+	HTN* right = hds->tRoot;
+	while(right->rChild != NULL)
+		right = right->rChild;
+
+	while(right != NULL)
+	{
+		printf("%i,", right->eTime);
+		right = right->lowNode;
+	}
+	printf("\n");
+}
+
+
 
