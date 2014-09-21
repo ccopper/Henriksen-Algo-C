@@ -18,9 +18,17 @@ int main(void)
 	printf("There is now an event at time %i\n", peek(hds));
 
 	char* temp = deQueue(hds);
-	printf("DeQueuing event. Payload was: %s", temp);
+	printf("DeQueuing event. Payload was: %s\n", temp);
 
 
+	insertEvent(hds, 5, NULL);
+	insertEvent(hds, 5, NULL);
+	insertEvent(hds, 5, NULL);
+	insertEvent(hds, 5, NULL);
+	insertEvent(hds, 5, NULL);
+	insertEvent(hds, 4, NULL);
+
+	/*
 	printf("First batch\n");
 	int x;
 	for(x = 2; x <= 100; x += 2 )
@@ -37,7 +45,7 @@ int main(void)
 	{
 		delete(hds, x);
 	}
-
+	*/
 
 	destroyHenrik(hds);
 

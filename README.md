@@ -7,7 +7,10 @@ Implementation of Henriksen's Algorithm in C
 - Create a new instance
 - Insert events
 - Dealloc tree
-- Issues a pull onces DIST_MAX(4) items were counted. This does not include the tree nodethe search started from.
+- Store additional data with the events
+- Issues a pull onces DIST_MAX(4) items were counted. This does not include the tree node the search started from.
+- Delete the first item in the list
+- Delete any item for a given time
 
 #Known issues/limitations/misc
 - Tree is pointer based

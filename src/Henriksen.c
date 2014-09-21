@@ -6,9 +6,6 @@
 
 #include "Henriksen.h"
 
-void printLTH(HDS* hds);
-
-
 #define nullNode(tNode) tNode->lItem = NULL; tNode->eTime = INT_MIN;
 #define copyNode(oNode,nNode) nNode->lItem = oNode->lItem; nNode->eTime = oNode->eTime;
 
@@ -304,20 +301,6 @@ HTN* createHTN(HLN* lItem, int eTime)
 }
 
 
-
-void printLTH(HDS* hds)
-{
-	HTN* right = hds->tRoot;
-	while(right->rChild != NULL)
-		right = right->rChild;
-
-	while(right != NULL)
-	{
-		printf("%i,", right->eTime);
-		right = right->lowNode;
-	}
-	printf("\n");
-}
 
 
 
