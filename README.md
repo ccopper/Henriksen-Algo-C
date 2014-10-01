@@ -14,12 +14,13 @@ Implementation of Henriksen's Algorithm in C
 
 #Known issues/limitations/misc
 - Tree is pointer based
-- Times must be unique and must be in the exclusive range from INT_MIN to INT_MAX 
+- Times should be unique and must be in the exclusive range from FLT_MIN to FLT_MAX 
+- Non Unique times may be returnedin any order
 - Once an event is dequeued, all future events must have a time greated than the dequeued events time.
 - If an insert takes place on the 4th item searched, the newly inserted item will not trigger a pull.
 - deQueue with no events returns NULL and will not dequeue anything.
 - delete will return NULL if no events with the given time were found.
-- delete and insert will not respond to requests with times of INT_MIN or INT_MAX
+- delete and insert will not respond to requests with times of FLT_MIN or FLT_MAX
 
 #Usage
 
@@ -31,23 +32,23 @@ Creates a new instance.
 - IN (hds) Pointer to the structure 
 Deallocs the entire structure. Does not dealloc payloads.
 
-``` void insertEvent(HDS* hds, int eTime, void* payload) ```
+``` void insertEvent(HDS* hds, float eTime, void* payload) ```
 - IN (hds) Pointer to the structure
-- IN (eTime) Time for the new event. Must be unique and between INT_MIN and INT_MAX exclusive. 
+- IN (eTime) Time for the new event. Must be unique and between FLT_MIN and FLT_MAX exclusive. 
 - IN (payload) Pointer to optional data regardng the event;
 Inserts a new item in the queue into the passed structure. Items are sorted by eTime, payload is an optional pointer to additional data.
 
-``` int peek(HDS* hds) ```
+``` float peek(HDS* hds) ```
 - IN (hds) Pointer to the structure
-- RETURN (INT) Time of the next event or INT_MIN if no events exist.
-Looks at the front of the queue. Will return the time of the next event or INT_MIN if none exist.
+- RETURN (FLOAT) Time of the next event or FLT_MIN if no events exist.
+Looks at the front of the queue. Will return the time of the next event or FLT_MIN if none exist.
 
 ``` void* deQueue(HDS* hds) ```
 - IN (hds) Pointer to the structure
 - RETURN (VOID *) Pointer to the payload given when the event was inserted.
 Removes the item from the front of the queue, if a payload was given the pointer will be returned.
 
-``` void* delete(HDS* hds, int eTime) ```
+``` void* delete(HDS* hds, float eTime) ```
 - IN (hds) Pointer to the structure
 - IN (eTime) Time of the event to remove
 - RETURN (VOID *) Pointer to the payload given when the event was inserted.

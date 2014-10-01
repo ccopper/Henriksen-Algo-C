@@ -15,7 +15,7 @@ int main(void)
 	printf("Created a new HDS at 0x%X\n", (unsigned int)hds);
 
 	insertEvent(hds, 5, NULL);
-	printf("There is now an event at time %i\n", peek(hds));
+	printf("There is now an event at time %f\n", peek(hds));
 
 	char* temp = deQueue(hds);
 	printf("DeQueuing event. Payload was: %s\n", temp);
@@ -57,7 +57,7 @@ void printInOrder(HTN* root)
 {
 	if(root->lChild != NULL)
 		printInOrder(root->lChild);
-	printf("%i, ", root->eTime);
+	printf("%f, ", root->eTime);
 	if(root->rChild != NULL)
 		printInOrder(root->rChild);
 }
@@ -70,7 +70,7 @@ void printList(HDS* hds)
 
 	while(temp != NULL)
 	{
-		printf("%i, ", temp->eTime);
+		printf("%f, ", temp->eTime);
 		temp = temp->lPrev;
 	}
 	printf("\n");
