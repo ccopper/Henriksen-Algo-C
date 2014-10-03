@@ -21,20 +21,28 @@ int main(void)
 	printf("DeQueuing event. Payload was: %s\n", temp);
 
 
-	insertEvent(hds, 5, NULL);
-	insertEvent(hds, 5, NULL);
-	insertEvent(hds, 5, NULL);
-	insertEvent(hds, 5, NULL);
-	insertEvent(hds, 5, NULL);
-	insertEvent(hds, 4, NULL);
-
-	/*
 	printf("First batch\n");
 	int x;
-	for(x = 2; x <= 100; x += 2 )
+	for(x = 100; x > 80; x -= 1 )
 	{
 		insertEvent(hds, x, (void *)x);
 	}
+
+	printInOrder(hds->tRoot);
+	printf("\n");
+	float y;
+	for(y = 95; y > 92; y -= 0.3 )
+	{
+		insertEvent(hds, y, (void *)x);
+	}
+	printInOrder(hds->tRoot);
+	//printList(hds);
+	insertEvent(hds, 93.5, NULL);
+	//printList(hds);
+
+	//findMinTreeR(hds->tRoot, 94.5);
+
+	/*
 	printf("Second Batch\n");
 	for(x = 1; x <= 100; x += 2 )
 	{
@@ -53,14 +61,6 @@ int main(void)
 }
 
 
-void printInOrder(HTN* root)
-{
-	if(root->lChild != NULL)
-		printInOrder(root->lChild);
-	printf("%f, ", root->eTime);
-	if(root->rChild != NULL)
-		printInOrder(root->rChild);
-}
 
 
 //Print the list of items in descending order

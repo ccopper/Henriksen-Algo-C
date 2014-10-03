@@ -21,7 +21,7 @@ HTN* createHTN(HLN* lItem, float eTime);
 HTN* findMinTree(HDS* hds, float eTime);
 HLN* findMinList(HDS* hds, HTN* tNode, float eTime);
 
-
+void printInOrder(HTN* root);
 void freeTree(HTN* root);
 void expandTree(HTN* root, int firstCall);
 
@@ -65,10 +65,22 @@ void insertEvent(HDS* hds, float eTime, void* payload)
 {
 	if(eTime == FLT_MIN || eTime == FLT_MAX )
 		return;
+
+//	printf("insertEvent(hds, %f, NULL);\n", eTime);
+//	fflush(stdout);
+
 	HLN* temp = createHLN(eTime, payload);
 	//Find smallest time > eTime
 	HTN* tNode = findMinTree(hds, eTime);
+//	if(tNode == NULL)
+//		printInOrder(hds->tRoot);
+//	fflush(stdout);
 	HLN* rItem = findMinList(hds, tNode, eTime);
+
+//if(rItem == NULL)
+//		printInOrder(hds->tRoot);
+//	fflush(stdout);
+
 	HLN* lItem = rItem->lPrev;
 	//Insert the new item
 	temp->lPrev = lItem;
@@ -90,9 +102,14 @@ float peek(HDS* hds)
 
 void* deQueue(HDS* hds)
 {
+
 	HLN* lItem = hds->lHead->lNext;
 	if(lItem->eTime == FLT_MAX)
 		return NULL;
+
+	//printf("deQueue(hds); //T=%f\n", lItem->eTime);
+	//fflush(stdout);
+
 
 	hds->lHead->lNext = lItem->lNext;
 	lItem->lNext->lPrev = hds->lHead;
@@ -148,37 +165,52 @@ void freeTree(HTN* root)
 HTN* findMinTree(HDS* hds, float eTime)
 {
 	HTN* tNode = hds->tRoot;
-
-	//printf("T: %i\n", eTime);
-	//printf("S: %i\n", tNode->eTime);
+	HTN* target = NULL;
+	//printf("T: %f\n", eTime);
+	//printf("S: %f\n", tNode->eTime);
 	//Search tree
 	while(1)
 	{
 		if(eTime >= tNode->eTime)
 		{
-			if(tNode->rChild == NULL || tNode->rChild->eTime < eTime)
+			if(tNode->rChild == NULL)
 				break;
 			tNode = tNode->rChild;
-			//printf("R: %i\n", tNode->eTime);
+			//printf("R: %f\n", tNode->eTime);
 		} else
 		{
-			if(tNode->lChild == NULL || tNode->lChild->eTime < eTime)
+			if(target == NULL || (target->eTime > tNode->eTime && tNode->eTime > eTime))
+			{
+				//printf("M: %f\n", tNode->eTime);
+				target = tNode;
+			}
+			if(tNode->lChild == NULL)
 				break;
+
 			tNode = tNode->lChild;
-			//printf("L: %i\n", tNode->eTime);
+			//printf("L: %f\n", tNode->eTime);
 		}
 	}
-	//printf("E: %i\n", tNode->eTime);
-	return tNode;
+//	printf("E: %f\n", tNode->eTime);
+	//printf("B: %f\n", target->eTime);
+	//printInOrder(hds->tRoot);
+	return target;
 }
+
+
+
 HLN* findMinList(HDS* hds, HTN* tNode, float eTime)
 {
 	int nCount = 0;
 	//Search starting at node provided
 	HLN* max = tNode->lItem;
 
+	//printf("S: %f\n", max->eTime);
+
 	while(max->eTime >= eTime)
 	{
+		//printf("T: %f\n", max->eTime);
+
 		//Pull if necessary
 		if(nCount > DIST_MAX)
 		{
@@ -200,7 +232,7 @@ HLN* findMinList(HDS* hds, HTN* tNode, float eTime)
 				{
 					expandTree(hds->tRoot, 1);
 				}
-				printf("E");
+				//printf("E");
 			}
 
 			//Reset the count and do another pull if necessary
@@ -220,7 +252,9 @@ HLN* findMinList(HDS* hds, HTN* tNode, float eTime)
 		max = max->lPrev;
 		nCount++;
 	}
-	//printf("E: %i\n", max->lNext->eTime);
+
+	//printf("E: %f\n", max->lNext->eTime);
+	fflush(stdout);
 
 	return max->lNext;
 }
@@ -297,6 +331,13 @@ HTN* createHTN(HLN* lItem, float eTime)
 }
 
 
-
+void printInOrder(HTN* root)
+{
+	if(root->lChild != NULL)
+		printInOrder(root->lChild);
+	printf("%f, ", root->eTime);
+	if(root->rChild != NULL)
+		printInOrder(root->rChild);
+}
 
 
